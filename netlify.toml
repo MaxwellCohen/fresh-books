@@ -1,0 +1,11 @@
+[build]
+  command = "NETLIFY=1 deno task build"
+  publish = "_fresh/client"
+
+[build.environment]
+  NETLIFY = "1"
+
+[[edge_functions]]
+  function = "fresh"
+  path = "/*"
+  excludedPath = ["/assets/*", "/icon.svg", "/robots.txt"]
