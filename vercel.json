@@ -1,3 +1,5 @@
 {
-  "framework": null
+  "framework": null,
+  "installCommand": "npx --yes deno@2.9.6 install",
+  "buildCommand": "VERCEL=1 npx --yes deno@2.9.6 task build"
 }

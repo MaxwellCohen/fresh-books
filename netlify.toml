@@ -1,5 +1,5 @@
 [build]
-  command = "NETLIFY=1 deno task build"
+  command = "npx --yes deno@2.9.6 install && NETLIFY=1 npx --yes deno@2.9.6 task build"
   publish = "_fresh/client"
 
 [build.environment]
