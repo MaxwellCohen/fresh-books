@@ -16,6 +16,12 @@ await Deno.writeTextFile(
   src.replaceAll("import.meta.dirname", '"/var/task/_fresh/server"'),
 );
 
+// Hashed build assets are immutable. Netlify and Cloudflare read `_headers` from the static dir.
+await Deno.writeTextFile(
+  "_fresh/client/_headers",
+  "/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n",
+);
+
 const common = {
   bundle: true,
   format: "esm",
@@ -57,6 +63,11 @@ if (host === "vercel") {
     JSON.stringify({
       version: 3,
       routes: [
+        {
+          src: "/assets/(.*)",
+          headers: { "cache-control": "public, max-age=31536000, immutable" },
+          continue: true,
+        },
         { handle: "filesystem" },
         { src: "/(.*)", dest: "/index" },
       ],
