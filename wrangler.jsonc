@@ -8,5 +8,8 @@
     "directory": "_fresh/client",
     "binding": "ASSETS"
   },
+  "kv_namespaces": [
+    { "binding": "CATALOG_CACHE", "id": "187e77ee45ad4107a579b89735a7a3b8" }
+  ],
   "observability": { "enabled": true }
 }
