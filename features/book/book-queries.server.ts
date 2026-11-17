@@ -4,6 +4,7 @@ import { GENERATED_PREVIEW_BOOKS } from '@/features/book/book-preview-catalog.ts
 import type { BookDetails, BookSummary } from '@/features/book/book-types.ts'
 import type { BookFilters, BookQuery } from '@/features/book/book-utils.ts'
 import { SAMPLE_BOOKS } from '@/features/book/data/sample-books.ts'
+import { withTtlCache } from '@/lib/catalog-cache.server.ts'
 import { getDb } from '@/lib/db/drizzle.ts'
 import { authors, books, bookToAuthor } from '@/lib/db/schema.ts'
 
@@ -98,7 +99,7 @@ function getPreviewCount(filters: BookFilters): number {
   return filterPreview(filters).length
 }
 
-export async function getBooksPage(query: BookQuery): Promise<BookSummary[]> {
+async function getBooksPageUncached(query: BookQuery): Promise<BookSummary[]> {
   const database = getDb()
   if (!database) return getPreviewBooks(query)
 
@@ -116,7 +117,7 @@ export async function getBooksPage(query: BookQuery): Promise<BookSummary[]> {
     .offset((query.page - 1) * ITEMS_PER_PAGE)
 }
 
-export async function getBooksCount(filters: BookFilters): Promise<number> {
+async function getBooksCountUncached(filters: BookFilters): Promise<number> {
   const database = getDb()
   if (!database) return getPreviewCount(filters)
 
@@ -127,7 +128,7 @@ export async function getBooksCount(filters: BookFilters): Promise<number> {
   return total
 }
 
-export async function getBookById(id: string): Promise<BookDetails | null> {
+async function getBookByIdUncached(id: string): Promise<BookDetails | null> {
   const bookId = Number(id)
   if (!Number.isInteger(bookId)) return null
 
@@ -161,3 +162,7 @@ export async function getBookById(id: string): Promise<BookDetails | null> {
 
   return result[0] ?? null
 }
+
+export const getBooksPage = withTtlCache('getBooksPage', getBooksPageUncached)
+export const getBooksCount = withTtlCache('getBooksCount', getBooksCountUncached)
+export const getBookById = withTtlCache('getBookById', getBookByIdUncached)

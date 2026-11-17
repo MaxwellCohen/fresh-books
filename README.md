@@ -28,3 +28,14 @@ Copy `.env.example` to `.env`:
 - The build picks the host adapter from the flag above; with no flag it targets Deno.
 - `POSTGRES_URL` is set on every host (Vercel and Netlify environment variable, Cloudflare secret). Without it the app serves the preview catalog.
 - Manual deploys: `deno task deploy:vercel`, `deno task deploy:netlify`, `deno task deploy:cloudflare`.
+
+### `optimized` branch
+
+| Host | URL |
+| --- | --- |
+| Vercel | https://fresh-books-optimized.vercel.app |
+| Netlify | https://fresh-books-max-optimized.netlify.app |
+| Cloudflare Workers | https://fresh-books-optimized.to-email-max.workers.dev |
+
+- Fonts: Geist and Geist Mono are self-hosted via `@fontsource-variable/*` and bundled with the app (no Google Fonts requests); hashed assets are served `immutable`.
+- Caching: catalog queries are cached for 1 hour (in-memory plus Vercel `getCache`, Netlify Blobs, or Cloudflare KV/`caches.default` when available) with in-flight de-dup, and HTML gets the same `Cache-Control` policy as the other ports.

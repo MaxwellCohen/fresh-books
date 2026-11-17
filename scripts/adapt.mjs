@@ -69,6 +69,7 @@ if (host === "vercel") {
     entryPoints: ["scripts/netlify-edge.mjs"],
     outfile: "netlify/edge-functions/fresh.js",
     platform: "neutral",
+    external: ["node:*"],
     mainFields: ["module", "main"],
     conditions: ["worker", "browser", "import"],
   });
