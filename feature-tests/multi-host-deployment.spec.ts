@@ -41,16 +41,17 @@ test('adapt.mjs produces Vercel, Netlify, Cloudflare and Deno outputs', async ()
   expect(netlifyStatus).toBe('200');
   notes.push(`netlify (${secs}s): netlify/edge-functions/fresh.js rendered /feature-tests 200`);
 
-  // Cloudflare: wrangler bundles cloudflare/worker.js; check it bundles for workerd.
+  // Cloudflare: wrangler bundles cloudflare/worker.js with nodejs_compat (Node built-ins available);
+  // check it bundles with the workerd condition and built-ins external.
   secs = denoBuild({ CLOUDFLARE: '1' });
   expect(existsSync(p('_fresh/client/_headers'))).toBe(true);
   const out = p('feature-tests/.out/cf-worker.js');
   execSync(
-    `${DENO} run -A npm:esbuild@0.25.12 cloudflare/worker.js --bundle --format=esm --platform=neutral --conditions=workerd,worker,browser --main-fields=module,main --external:node:* --log-level=error --outfile=${out}`,
+    `${DENO} run -A npm:esbuild@0.25.12 cloudflare/worker.js --bundle --format=esm --platform=node --conditions=workerd,worker --log-level=error --outfile=${out}`,
     { cwd: ROOT, stdio: 'pipe' },
   );
   expect(existsSync(out)).toBe(true);
-  notes.push(`cloudflare (${secs}s): _fresh/client/_headers + cloudflare/worker.js bundles for workerd (not deployed)`);
+  notes.push(`cloudflare (${secs}s): _fresh/client/_headers + cloudflare/worker.js bundles (esbuild, workerd condition, nodejs_compat built-ins external; not deployed)`);
 
   // Deno (default, no flag).
   secs = denoBuild();
