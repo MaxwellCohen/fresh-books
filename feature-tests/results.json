@@ -1,8 +1,8 @@
 {
   "framework": "fresh",
   "repo": "fresh-books",
-  "commit": "a86ef5d68aa4407c077da3d88c6503923205a384",
-  "ranAt": "2026-11-26T05:02:36.466Z",
+  "commit": "35937244fef4d4269bf629e24795dbff1e410973",
+  "ranAt": "2026-11-26T05:04:56.428Z",
   "results": {
     "css-inlining": {
       "claimedLabel": "manual",
@@ -29,7 +29,7 @@
       "claimedLabel": "manual",
       "status": "pass",
       "method": "the port's withTtlCache (memory Map + host store, 1h TTL, in-flight de-dup) around a timestamp loader",
-      "evidence": "2 concurrent + 1 later request (1.2s) all got stamp 2026-11-26T05:02:26.456Z / load #1; new key → load #2 with a new stamp. TTL expiry (1h) not waited for",
+      "evidence": "2 concurrent + 1 later request (1.2s) all got stamp 2026-11-26T05:04:46.597Z / load #1; new key → load #2 with a new stamp. TTL expiry (1h) not waited for",
       "test": "feature-tests/caching.spec.ts"
     },
     "route-prefetching": {
@@ -64,21 +64,21 @@
       "claimedLabel": "third-party",
       "status": "pass",
       "method": "rollup-plugin-visualizer added to vite.config.ts when ANALYZE=1",
-      "evidence": "ANALYZE=1 deno task build (54s) wrote Rollup Visualizer treemaps .out/stats-client.html (176 KB, lists island chunks) and .out/stats-ssr.html (395 KB)",
+      "evidence": "ANALYZE=1 deno task build (22s) wrote Rollup Visualizer treemaps .out/stats-client.html (176 KB, lists island chunks) and .out/stats-ssr.html (395 KB)",
       "test": "feature-tests/bundle-analysis.spec.ts"
     },
     "third-party-scripts": {
       "claimedLabel": "manual",
       "status": "pass",
       "method": "inline <head> snippet injects an async <script> at requestIdleCallback after load",
-      "evidence": "no <script src> for the vendor file in server HTML; injected async at idle after load, ran at 91ms (readyState=complete, FCP 64ms)",
+      "evidence": "no <script src> for the vendor file in server HTML; injected async at idle after load, ran at 99ms (readyState=complete, FCP 72ms)",
       "test": "feature-tests/third-party-scripts.spec.ts"
     },
     "multi-host-deployment": {
       "claimedLabel": "manual",
-      "status": "fail",
+      "status": "pass",
       "method": "scripts/adapt.mjs post-build wrappers: VERCEL=1 / NETLIFY=1 / CLOUDFLARE=1 / default Deno",
-      "evidence": "FAILED: Error: Command failed: /home/maxc/.deno-npm/node_modules/@deno/linux-x64-glibc/deno run -A npm:esbuild@0.25.12 cloudflare/worker.js --bundle --format=esm --platform=neutral --conditions=workerd,worker,browser --main-fields=module,main --external:node:* --log-level=error --outfile=/home/maxc/code/books-demo/_ft/fresh-books/feature-tests/.out/cf-worker.js | ✘ [ERROR] Could not resolve \"process\" |     node_modules/.deno/@netlify+blobs@11.1.9/node_modules/@netlify/blobs/dist/chunk-SQCJ2S3G.js:71:20: |       71 │ import process from \"process\";",
+      "evidence": "vercel (24s): .vercel/output + Node function served /feature-tests 200; netlify (18s): netlify/edge-functions/fresh.js rendered /feature-tests 200; cloudflare (17s): _fresh/client/_headers + cloudflare/worker.js bundles (esbuild, workerd condition, nodejs_compat built-ins external; not deployed); deno (17s): _fresh/server.js",
       "test": "feature-tests/multi-host-deployment.spec.ts"
     }
   }
