@@ -1,5 +1,12 @@
 {
   "framework": null,
   "installCommand": "npx --yes deno@2.9.6 install",
-  "buildCommand": "VERCEL=1 npx --yes deno@2.9.6 task build"
+  "buildCommand": "VERCEL=1 npx --yes deno@2.9.6 task build",
+  "git": {
+    "deploymentEnabled": {
+      "**": false,
+      "main": true,
+      "optimized": true
+    }
+  }
 }
