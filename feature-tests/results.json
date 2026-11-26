@@ -1,0 +1,85 @@
+{
+  "framework": "fresh",
+  "repo": "fresh-books",
+  "commit": "35937244fef4d4269bf629e24795dbff1e410973",
+  "ranAt": "2026-11-26T05:04:56.428Z",
+  "results": {
+    "css-inlining": {
+      "claimedLabel": "manual",
+      "status": "pass",
+      "method": "Vite `?inline` CSS import rendered into <style> via Fresh <Head> (query preserved by a small resolveId plugin in vite.config.ts)",
+      "evidence": "inline <style> has .ft-inline-marker-q7z (82 chars); 1 <link rel=stylesheet> (global Tailwind CSS) and none contains the marker; style applied in browser",
+      "test": "feature-tests/css-inlining.spec.ts"
+    },
+    "font-optimization": {
+      "claimedLabel": "third-party",
+      "status": "pass",
+      "method": "@fontsource-variable/geist imported in global.css (self-hosted, font-display: swap) + hand-written <link rel=preload as=font> using a Vite ?url import",
+      "evidence": "0 Google Fonts requests; 5 Geist @font-face rules all font-display:swap; <link rel=preload as=font> /assets/geist-latin-wght-normal-BgDaEnEv.woff2 matches the @font-face src and is served same-origin as font/woff2; document.fonts loaded 'Geist Variable'",
+      "test": "feature-tests/font-optimization.spec.ts"
+    },
+    "image-pipeline": {
+      "claimedLabel": "third-party",
+      "status": "pass",
+      "method": "vite-imagetools: sample.jpg?w=400;800;1200&format=webp&as=srcset, explicit width/height, loading=lazy",
+      "evidence": "srcset widths 400w,800w,1200w from a 1600px JPEG; width/height 800x500; offscreen loading=lazy (its srcset URLs not requested until scrolled into view); srcset URLs serve image/webp",
+      "test": "feature-tests/image-pipeline.spec.ts"
+    },
+    "caching": {
+      "claimedLabel": "manual",
+      "status": "pass",
+      "method": "the port's withTtlCache (memory Map + host store, 1h TTL, in-flight de-dup) around a timestamp loader",
+      "evidence": "2 concurrent + 1 later request (1.2s) all got stamp 2026-11-26T05:04:46.597Z / load #1; new key → load #2 with a new stamp. TTL expiry (1h) not waited for",
+      "test": "feature-tests/caching.spec.ts"
+    },
+    "route-prefetching": {
+      "claimedLabel": "manual",
+      "status": "pass",
+      "method": "<script type=\"speculationrules\"> prefetch, eagerness moderate (hover), links outside f-client-nav",
+      "evidence": "before click: page.on('request') saw 2 request(s) to target (Sec-Purpose: prefetch); server logged 1 hit(s), Sec-Purpose=prefetch",
+      "test": "feature-tests/route-prefetching.spec.ts"
+    },
+    "islands": {
+      "claimedLabel": "first-party",
+      "status": "pass",
+      "method": "islands/FtCounter.tsx island next to a server-only components/feature-tests/static-panel.tsx",
+      "evidence": "counter island hydrated (2 clicks → 2); 5 JS files loaded incl. fresh-island__FtCounter-BcfaGooE.js; none contain the static marker or StaticPanel",
+      "test": "feature-tests/islands.spec.ts"
+    },
+    "render-modes": {
+      "claimedLabel": "manual",
+      "status": "pass",
+      "method": "routes/feature-tests/render-modes/_middleware.ts: per-route Cache-Control (s-maxage / swr / no-store) + in-process HTML cache",
+      "evidence": "static: same timestamp twice, \"public, max-age=0, s-maxage=31536000\"; isr: same within 3s then re-rendered after 3.5s, \"public, max-age=0, s-maxage=3, stale-while-revalidate=86400\"; ssr: new timestamp each request, \"private, no-store\". No build-time prerender: \"static\" is rendered on first request and held in memory",
+      "test": "feature-tests/render-modes.spec.ts"
+    },
+    "reactivity": {
+      "claimedLabel": "first-party",
+      "status": "pass",
+      "method": "@preact/signals useSignal passed directly into JSX inside an island",
+      "evidence": "3 clicks → text \"3\"; component render counter stayed at 1 (useSignal passed directly into JSX binds the text node)",
+      "test": "feature-tests/reactivity.spec.ts"
+    },
+    "bundle-analysis": {
+      "claimedLabel": "third-party",
+      "status": "pass",
+      "method": "rollup-plugin-visualizer added to vite.config.ts when ANALYZE=1",
+      "evidence": "ANALYZE=1 deno task build (22s) wrote Rollup Visualizer treemaps .out/stats-client.html (176 KB, lists island chunks) and .out/stats-ssr.html (395 KB)",
+      "test": "feature-tests/bundle-analysis.spec.ts"
+    },
+    "third-party-scripts": {
+      "claimedLabel": "manual",
+      "status": "pass",
+      "method": "inline <head> snippet injects an async <script> at requestIdleCallback after load",
+      "evidence": "no <script src> for the vendor file in server HTML; injected async at idle after load, ran at 99ms (readyState=complete, FCP 72ms)",
+      "test": "feature-tests/third-party-scripts.spec.ts"
+    },
+    "multi-host-deployment": {
+      "claimedLabel": "manual",
+      "status": "pass",
+      "method": "scripts/adapt.mjs post-build wrappers: VERCEL=1 / NETLIFY=1 / CLOUDFLARE=1 / default Deno",
+      "evidence": "vercel (24s): .vercel/output + Node function served /feature-tests 200; netlify (18s): netlify/edge-functions/fresh.js rendered /feature-tests 200; cloudflare (17s): _fresh/client/_headers + cloudflare/worker.js bundles (esbuild, workerd condition, nodejs_compat built-ins external; not deployed); deno (17s): _fresh/server.js",
+      "test": "feature-tests/multi-host-deployment.spec.ts"
+    }
+  }
+}

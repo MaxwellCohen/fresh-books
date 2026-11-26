@@ -39,3 +39,7 @@ Copy `.env.example` to `.env`:
 
 - Fonts: Geist and Geist Mono are self-hosted via `@fontsource-variable/*` and bundled with the app (no Google Fonts requests); hashed assets are served `immutable`.
 - Caching: catalog queries are cached for 1 hour (in-memory plus Vercel `getCache`, Netlify Blobs, or Cloudflare KV/`caches.default` when available) with in-flight de-dup, and HTML gets the same `Cache-Control` policy as the other ports.
+
+## Feature tests
+
+`/feature-tests` has one page per Framework Compare feature; `deno task test:features` builds, serves on port 4129 and runs Playwright specs, writing `feature-tests/results.json`. See [feature-tests/README.md](feature-tests/README.md). Deno is required; if it isn't installed, `npm install deno@2.9.6` into `~/.deno-npm` works (the runner also falls back to `npx deno@2.9.6`).
