@@ -1,0 +1,11 @@
+{
+  "name": "fresh-books-feature-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:features": "node run.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1"
+  }
+}

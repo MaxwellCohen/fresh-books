@@ -9,6 +9,8 @@ app.use(staticFiles());
 app.use(async (ctx) => {
   const res = await ctx.next();
   if (!res.headers.get("content-type")?.includes("text/html")) return res;
+  // Routes that pick their own policy (feature-tests/render-modes) set X-Render-Cache.
+  if (res.headers.has("X-Render-Cache")) return res;
   const headers = new Headers(res.headers);
   headers.set("Cache-Control", hostDocumentCacheControl());
   return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
