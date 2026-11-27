@@ -2,6 +2,7 @@
   "framework": null,
   "installCommand": "npx --yes deno@2.9.6 install",
   "buildCommand": "VERCEL=1 npx --yes deno@2.9.6 task build",
+  "ignoreCommand": "case \"$VERCEL_PROJECT_PRODUCTION_URL\" in \"\") false;; *-optimized*) [ \"$VERCEL_GIT_COMMIT_REF\" != optimized ];; *) [ \"$VERCEL_GIT_COMMIT_REF\" != main ];; esac",
   "git": {
     "deploymentEnabled": {
       "**": false,
