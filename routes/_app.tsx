@@ -1,5 +1,7 @@
 import { Partial } from 'fresh/runtime';
 import { define } from '../utils.ts';
+// Same file the Fontsource @font-face points at, so Vite gives it the same hashed /assets URL.
+import geistLatinUrl from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 
 const description =
   'Browse two million Goodreads books with Fresh, Preact, server-rendered search, and URL-driven filters.';
@@ -23,6 +25,8 @@ export default define.page(function App({ Component }) {
         <meta property="og:title" content="Fresh Books" />
         <meta property="og:type" content="website" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        {/* Fontsource has no preload helper: without this the browser finds Geist only after the CSS. */}
+        <link rel="preload" href={geistLatinUrl} as="font" type="font/woff2" crossorigin="anonymous" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: coverErrorScript }} />
       </head>
