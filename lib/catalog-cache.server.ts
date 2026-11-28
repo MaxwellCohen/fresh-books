@@ -7,10 +7,6 @@ export const PRIVATE_DOCUMENT_CACHE_CONTROL =
 const TTL_MS = CATALOG_CACHE_REVALIDATE_SECONDS * 1000
 
 type Entry<T> = { expiresAt: number; value: T }
-type CatalogKv = {
-  get(key: string, type: 'json'): Promise<unknown>
-  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>
-}
 
 const memory = new Map<string, Entry<unknown>>()
 const inflight = new Map<string, Promise<unknown>>()
@@ -40,17 +36,11 @@ export function hostDocumentCacheControl(): string {
   return isVercel() ? VERCEL_DOCUMENT_CACHE_CONTROL : PRIVATE_DOCUMENT_CACHE_CONTROL
 }
 
-let catalogKv: CatalogKv | undefined
-
-/** Bind Workers KV so catalog queries persist across isolates. */
-export function bindCatalogCache(kv: CatalogKv | undefined) {
-  if (kv) catalogKv = kv
-}
-
 function edgeRequest(key: string) {
   return new Request(`https://example.com/books-catalog-cache/v1/${encodeURIComponent(key)}`)
 }
 
+/** Cloudflare Cache API (`caches.default`): free, unlike Workers KV writes. */
 function edgeCache(): Cache | undefined {
   return (globalThis as { caches?: { default?: Cache } }).caches?.default
 }
@@ -61,14 +51,6 @@ function memoryGet<T>(key: string): T | undefined {
 }
 
 async function platformGet<T>(key: string): Promise<T | undefined> {
-  try {
-    if (catalogKv) {
-      const value = await catalogKv.get(key, 'json')
-      if (value != null) return value as T
-      return
-    }
-  } catch { /* KV optional */ }
-
   try {
     if (isVercel()) {
       const { getCache } = await import('@vercel/functions')
@@ -97,15 +79,6 @@ async function platformGet<T>(key: string): Promise<T | undefined> {
 }
 
 async function platformSet<T>(key: string, value: T): Promise<void> {
-  try {
-    if (catalogKv) {
-      await catalogKv.put(key, JSON.stringify(value), {
-        expirationTtl: CATALOG_CACHE_REVALIDATE_SECONDS,
-      })
-      return
-    }
-  } catch { /* KV optional */ }
-
   try {
     if (isVercel()) {
       const { getCache } = await import('@vercel/functions')

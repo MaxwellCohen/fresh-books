@@ -38,7 +38,7 @@ Copy `.env.example` to `.env`:
 | Cloudflare Workers | https://fresh-books-optimized.to-email-max.workers.dev |
 
 - Fonts: Geist and Geist Mono are self-hosted via `@fontsource-variable/*` and bundled with the app (no Google Fonts requests); hashed assets are served `immutable`.
-- Caching: catalog queries are cached for 1 hour (in-memory plus Vercel `getCache`, Netlify Blobs, or Cloudflare KV/`caches.default` when available) with in-flight de-dup, and HTML gets the same `Cache-Control` policy as the other ports.
+- Caching: catalog queries are cached for 1 hour (in-memory plus Vercel `getCache`, Netlify Blobs, or the Cloudflare Cache API `caches.default` when available) with in-flight de-dup, and HTML gets the same `Cache-Control` policy as the other ports.
 
 ## Feature tests
 
